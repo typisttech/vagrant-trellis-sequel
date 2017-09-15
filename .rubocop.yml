@@ -3,6 +3,3 @@ inherit_from:
 
 AllCops:
   TargetRubyVersion: 2.3
-
-Layout/IndentationConsistency:
-  EnforcedStyle: normal
