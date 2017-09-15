@@ -7,7 +7,7 @@
 [![Donate via PayPal](https://img.shields.io/badge/Donate-PayPal-blue.svg)](https://www.typist.tech/donate/vagrant-trellis-sequel/)
 [![Hire Typist Tech](https://img.shields.io/badge/Hire-Typist%20Tech-ff69b4.svg)](https://www.typist.tech/contact/)
 
-Open your Trellis databases in Sequel Pro with a single command
+Open Trellis databases in Sequel Pro with a single command
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
@@ -15,15 +15,16 @@ Open your Trellis databases in Sequel Pro with a single command
 
 - [Installation](#installation)
 - [Usage](#usage)
-- [Going super lazy](#going-super-lazy)
-- [Limitations](#limitations)
+- [Connection Errors](#connection-errors)
+  - [`key_load_public: No such file or directory`](#key_load_public-no-such-file-or-directory)
+- [Help Wanted!](#help-wanted)
 - [Support!](#support)
   - [Donate via PayPal *](#donate-via-paypal-)
   - [Why don't you hire me?](#why-dont-you-hire-me)
   - [Want to help in other way? Want to be a sponsor?](#want-to-help-in-other-way-want-to-be-a-sponsor)
 - [Feedback](#feedback)
 - [Change log](#change-log)
-- [Author Information](#author-information)
+- [Credits](#credits)
 - [Contributing](#contributing)
 - [License](#license)
 
@@ -36,6 +37,17 @@ $ vagrant plugin install vagrant-trellis-sequel
 ```
 
 ## Usage
+
+```bash
+#Usage: vagrant trellis-sequel open [options] [vm-id]
+#
+#    -u, --user DB_USER               Required. Database username.
+#    -p, --password DB_PASSWORD       Required. Value of db_password from group_vars/development/vault.yml
+#    -h, --help                       Print this help
+
+# Example:
+$ vagrant trellis-sequel open -u example_com -p example_dbpassword
+```
 
 ## Connection Errors
 
@@ -62,6 +74,12 @@ The simple solution is to add this to your `~/.ssh/config` file:
 ```
 
 This disables using system-level keys (both from the agent, and your regular SSH keys), and disables host checks (which are not necessary for localhost). This does not affect `vagrant ssh`, which already uses these options.
+
+## Help Wanted!
+
+Pull requests are welcome.
+
+- Parse database passwords from config file.
 
 ## Support!
 
