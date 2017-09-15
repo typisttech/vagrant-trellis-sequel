@@ -11,11 +11,11 @@
     <key>connection</key>
     <dict>
       <key>database</key>
-      <string><%= database["name"] %></string>
+      <string><%= database[:name] %></string>
       <key>host</key>
       <string>127.0.0.1</string>
       <key>password</key>
-      <string><%= database["password"] %></string>
+      <string><%= database[:password] %></string>
       <key>ssh_host</key>
       <string><%= ssh["host"] %></string>
       <key>ssh_keyLocation</key>
@@ -29,7 +29,7 @@
       <key>type</key>
       <string>SPSSHTunnelConnection</string>
       <key>user</key>
-      <string><%= database["user"] %></string>
+      <string><%= database[:user] %></string>
     </dict>
   </dict>
   <key>format</key>
