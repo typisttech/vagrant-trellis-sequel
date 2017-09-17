@@ -75,8 +75,11 @@ module VagrantPlugins
 
         private
 
+        # TODO: Do not read password file if vault is not encrypted
         def vault_password_from(path: nil, machine: nil)
           path ||= File.join(machine.env.root_path, '.vault_pass')
+          # TODO: Raise exception
+          return unless File.file?(path)
           File.read(path).chomp
         end
 

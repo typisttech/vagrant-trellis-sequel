@@ -5,9 +5,9 @@ require 'ansible/vault'
 module VagrantPlugins
   module TrellisSequel
     class Vault
-      def initialize(path:, password: 'nope')
+      def initialize(path:, password:)
         @path = path
-        @password = password
+        @password = password || 'no-password-given'
       end
 
       def database_for(site: nil)
