@@ -18,9 +18,9 @@ module VagrantPlugins
         end
 
         {
-          "name": name_for(site: site),
-          "user": user_for(site: site),
-          "password": password_for(site: site)
+          name: name_for(site: site),
+          user: user_for(site: site),
+          password: password_for(site: site)
         }
       end
 
