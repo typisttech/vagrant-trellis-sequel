@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
+require 'ansible/vault'
 require 'vagrant_plugins/trellis_sequel/spf'
 require 'vagrant_plugins/trellis_sequel/vault'
+require 'vagrant_plugins/trellis_sequel/vault_pass'
 
 module VagrantPlugins
   module TrellisSequel
@@ -22,8 +24,8 @@ module VagrantPlugins
               options[:vault_password_file] = vault_password_file
             end
 
-            o.on('--vault-pass [VAULT_PASS]', String, 'Vault password.') do |vault_password|
-              options[:vault_password] = vault_password
+            o.on('--vault-pass [VAULT_PASS]', String, 'Vault password.') do |vault_pass|
+              options[:vault_pass] = vault_pass
             end
 
             o.on('-h', '--help', 'Print this help') do
@@ -38,11 +40,17 @@ module VagrantPlugins
             ssh_info = machine.ssh_info
             raise Vagrant::Errors::SSHNotReady if ssh_info.nil?
 
-            options[:vault_password] ||= vault_password_from(path: options[:vault_password_file], machine: machine)
-
             # Collect database data
             vault_path = File.join(machine.env.root_path, 'group_vars/development/vault.yml')
-            vault = Vault.new(path: vault_path, password: options[:vault_password])
+
+            if ::Ansible::Vault.encrypted?(vault_path)
+              options[:vault_pass] ||= VaultPass.read_from_file(
+                file_path: options[:vault_password_file],
+                machine_root_path: machine.env.root_path
+              )
+            end
+
+            vault = Vault.new(path: vault_path, password: options[:vault_pass])
 
             data = {
               database: vault.database_for(site: options[:site]),
@@ -61,16 +69,6 @@ module VagrantPlugins
           0
         end
         # rubocop:enable Metrics/MethodLength
-
-        private
-
-        # TODO: Do not read password file if vault is not encrypted
-        def vault_password_from(path: nil, machine: nil)
-          path ||= File.join(machine.env.root_path, '.vault_pass')
-          # TODO: Raise exception
-          return unless File.file?(path)
-          File.read(path).chomp
-        end
       end
     end
   end
