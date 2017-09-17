@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
-require 'erb'
-require 'ostruct'
+require 'vagrant_plugins/trellis_sequel/spf'
 require 'vagrant_plugins/trellis_sequel/vault'
 
 module VagrantPlugins
@@ -55,17 +54,7 @@ module VagrantPlugins
               }
             }
 
-            # Output template
-            content = template.result(OpenStruct.new(data).instance_eval { binding })
-
-            # Write it to the file
-            path = File.join(@env.tmp_path, "#{data[:database][:name]}.spf")
-            file = File.open(path, 'w')
-            file.write(content)
-            file.close
-
-            # And, open it
-            system("open \"#{path}\"")
+            Spf.create_and_open(data: data, path: @env.tmp_path)
           end
 
           # Always exit with success
@@ -81,11 +70,6 @@ module VagrantPlugins
           # TODO: Raise exception
           return unless File.file?(path)
           File.read(path).chomp
-        end
-
-        def template
-          path = File.join(File.dirname(__FILE__), '/..', 'template.spf')
-          ERB.new(File.read(path), nil, '%<>')
         end
       end
     end
