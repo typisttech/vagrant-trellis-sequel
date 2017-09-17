@@ -39,7 +39,7 @@ module VagrantPlugins
       end
 
       def template_path
-        File.join(File.dirname(__FILE__), 'template.spf')
+        File.join(File.dirname(__FILE__), 'template.spf.erb')
       end
     end
   end

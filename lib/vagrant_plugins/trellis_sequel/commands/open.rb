@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'ansible/vault'
 require 'vagrant_plugins/trellis_sequel/spf'
 require 'vagrant_plugins/trellis_sequel/vault'
 require 'vagrant_plugins/trellis_sequel/vault_pass'
@@ -9,8 +8,29 @@ module VagrantPlugins
   module TrellisSequel
     module Commands
       class Open < Vagrant.plugin('2', :command)
-        # rubocop:disable Metrics/MethodLength
         def execute
+          options, argv = parse_options!
+
+          with_target_vms(argv) do |machine|
+            raise Vagrant::Errors::SSHNotReady unless machine.communicate.ready?
+
+            Spf.create_and_open(
+              data: {
+                database: database_for(machine_root_path: machine.env.root_path, **options),
+                ssh: ssh_for(machine)
+              },
+              path: machine.env.tmp_path
+            )
+          end
+
+          # Always exit with success
+          0
+        end
+
+        private
+
+        # rubocop:disable Metrics/MethodLength
+        def parse_options!
           options = {}
           opts = OptionParser.new do |o|
             o.banner = 'Usage: vagrant trellis-sequel open [options] [vm-id]'
@@ -33,42 +53,20 @@ module VagrantPlugins
               exit
             end
           end
-          argv = parse_options(opts)
-
-          with_target_vms(argv) do |machine|
-            # Collect SSL data
-            ssh_info = machine.ssh_info
-            raise Vagrant::Errors::SSHNotReady if ssh_info.nil?
-
-            # Collect database data
-            vault_path = File.join(machine.env.root_path, 'group_vars/development/vault.yml')
-
-            if ::Ansible::Vault.encrypted?(vault_path)
-              options[:vault_pass] ||= VaultPass.read_from_file(
-                file_path: options[:vault_password_file],
-                machine_root_path: machine.env.root_path
-              )
-            end
-
-            vault = Vault.new(path: vault_path, password: options[:vault_pass])
-
-            data = {
-              database: vault.database_for(site: options[:site]),
-              ssh: {
-                host: ssh_info[:host],
-                port: ssh_info[:port],
-                user: ssh_info[:username],
-                private_key_path: ssh_info[:private_key_path]
-              }
-            }
-
-            Spf.create_and_open(data: data, path: @env.tmp_path)
-          end
-
-          # Always exit with success
-          0
+          [options, parse_options(opts)]
         end
         # rubocop:enable Metrics/MethodLength
+
+        def database_for(args)
+          Vault.build(**args)
+               .database_for(**args)
+        end
+
+        def ssh_for(machine)
+          machine.ssh_info.select do |key, _value|
+            %i[host port username private_key_path].include?(key)
+          end
+        end
       end
     end
   end

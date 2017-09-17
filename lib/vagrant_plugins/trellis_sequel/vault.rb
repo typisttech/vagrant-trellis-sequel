@@ -5,40 +5,57 @@ require 'ansible/vault'
 module VagrantPlugins
   module TrellisSequel
     class Vault
+      def self.build(machine_root_path:, vault_pass: nil, vault_password_file: nil, **_)
+        vault_path = File.join(machine_root_path, 'group_vars', 'development', 'vault.yml')
+
+        if ::Ansible::Vault.encrypted?(vault_path)
+          vault_pass ||= VaultPass.read_from_file(
+            file_path: vault_password_file,
+            machine_root_path: machine_root_path
+          )
+        end
+
+        Vault.new(path: vault_path, password: vault_pass)
+      end
+
       def initialize(path:, password:)
         @path = path
         @password = password
       end
 
-      def database_for(site: nil)
-        site ||= wordpress_sites&.keys&.first
+      def database_for(site: nil, **_)
+        site ||= first_wordpress_site
 
-        unless password_exist_for? site
+        unless password_exist_for?(site)
           raise Vagrant::Errors::CLIInvalidOptions.new help: "DB password not found for #{site}"
         end
 
         {
-          "name": name_for(site: site),
-          "user": user_for(site: site),
-          "password": password_for(site: site)
+          name: db_name_for(site),
+          user: db_user_for(site),
+          password: db_password_for(site)
         }
       end
 
       private
 
-      def password_exist_for?(site)
-        !password_for(site: site).nil?
+      def first_wordpress_site
+        wordpress_sites&.keys&.first
       end
 
-      def name_for(site:)
+      def password_exist_for?(site)
+        !db_password_for(site).nil?
+      end
+
+      def db_name_for(site)
         underscore(site) + '_development'
       end
 
-      def user_for(site:)
+      def db_user_for(site)
         underscore(site)
       end
 
-      def password_for(site:)
+      def db_password_for(site)
         content.dig('vault_wordpress_sites', site, 'env', 'db_password')
       end
 
@@ -55,8 +72,8 @@ module VagrantPlugins
       end
 
       def underscore(domain)
-        word = domain.downcase
-        word.tr!('.', '_')
+        domain.downcase
+              .tr('.', '_')
       end
     end
   end
