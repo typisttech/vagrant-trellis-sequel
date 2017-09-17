@@ -30,6 +30,10 @@ module VagrantPlugins
           @subcommands.get(@sub_command&.to_sym)
                       .new(@sub_args, @env)
                       .execute
+        rescue Vagrant::Errors::VagrantError => e
+          raise e
+        rescue StandardError => e
+          raise Vagrant::Errors::CLIInvalidUsage, help: e.message
         end
 
         private
