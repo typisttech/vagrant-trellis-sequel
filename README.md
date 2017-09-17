@@ -15,9 +15,15 @@ Open Trellis databases in Sequel Pro with a single command
 
 - [Installation](#installation)
 - [Usage](#usage)
+  - [Noob](#noob)
+  - [Specify which site's database](#specify-which-sites-database)
+  - [Specify vault password file](#specify-vault-password-file)
+  - [Specify vault password](#specify-vault-password)
+- [Common Errors](#common-errors)
+  - [DB password not found for `example_dev`](#db-password-not-found-for-example_dev)
+  - [HMAC encoded in the file does not match calculated one](#hmac-encoded-in-the-file-does-not-match-calculated-one)
 - [Connection Errors](#connection-errors)
   - [`key_load_public: No such file or directory`](#key_load_public-no-such-file-or-directory)
-- [Help Wanted!](#help-wanted)
 - [Support!](#support)
   - [Donate via PayPal *](#donate-via-paypal-)
   - [Why don't you hire me?](#why-dont-you-hire-me)
@@ -39,17 +45,88 @@ $ vagrant plugin install vagrant-trellis-sequel
 ## Usage
 
 ```bash
-#Usage: vagrant trellis-sequel open [options] [vm-id]
-#
-#    -u, --user DB_USER               Required. Database username.
-#    -p, --password DB_PASSWORD       Required. Value of db_password from group_vars/development/vault.yml
-#    -h, --help                       Print this help
+$ vagrant trellis-sequel open --help
+Usage: vagrant trellis-sequel open [options] [vm-id]
 
-# Example:
-$ vagrant trellis-sequel open -u example_com -p example_dbpassword
+        --site [site]                Site whose database going to be opened.
+        --vault-password-file [VAULT_PASSWORD_FILE]
+                                     Vault password file.
+        --vault-pass [VAULT_PASS]    Vault password.
+    -h, --help                       Print this help
 ```
 
+### Noob
+
+```bash
+$ vagrant trellis-sequel open
+```
+
+This works for most of the cases:
+  - `vault.yml` is unencrypted
+  - `vault.yml` is encrypted and `.vault_pass` contains the vault password
+  - running from within the Trellis directory
+
+### Specify which site's database
+
+```
+$ vagrant trellis-sequel open --site example.com
+```
+
+Use the `--site` option to specify which site's database to open. By default, the first site's database will be opened.
+Note: This is the site key of `vault_wordpress_sites` in `vault.yml`, usually ends with `.com`.
+
+### Specify vault password file
+
+```
+$ vagrant trellis-sequel open --vault-password-file .my_vault_password_file
+$ vagrant trellis-sequel open --vault-password-file /my/top/secret.txt
+```
+
+Use the `--vault-password-file` option to specify path to the vault password file, either relative path from Trellis root or absolute path.
+Default value is `.vault_pass` if `vault.yml` is encrypted.
+
+### Specify vault password
+
+```
+$ vagrant trellis-sequel open --vault-pass my-top-secret
+```
+
+Use the `--vault-pass` option to provide vault password if you encrypted `vault.yml` but don't have a vault password file.
+
+## Common Errors
+
+### DB password not found for `example_dev`
+
+That means you passed wrong `--site` or `vault.yml` is malformed.
+
+```yaml
+# group_vars/development/vault.yml
+
+vault_wordpress_sites:
+  example.com:
+    admin_password: admin
+    env:
+      db_password: bye
+  www.typist.tech:
+    admin_password: admin
+    env:
+      db_password: hello
+```
+
+For the above `vault.yml`, these 2 commands are valid:
+```bash
+$ vagrant trellis-sequel open --site example.com
+$ vagrant trellis-sequel open --site www.typist.tech
+```
+
+
+### HMAC encoded in the file does not match calculated one
+
+That means vault password is incorrect.
+
 ## Connection Errors
+
+(This part is stolen from from [Sequel Pro for Chassis](https://github.com/Chassis/SequelPro/tree/b3236ca5205e34f6c2e135a9f1b8aa0f1686717b#connection-errors).)
 
 If you get a connection error, the first thing to attempt to debug is to check the details that Sequel Pro gives you (under the Show Details button).
 
@@ -74,12 +151,6 @@ The simple solution is to add this to your `~/.ssh/config` file:
 ```
 
 This disables using system-level keys (both from the agent, and your regular SSH keys), and disables host checks (which are not necessary for localhost). This does not affect `vagrant ssh`, which already uses these options.
-
-## Help Wanted!
-
-Pull requests are welcome.
-
-- Parse database passwords from config file.
 
 ## Support!
 
