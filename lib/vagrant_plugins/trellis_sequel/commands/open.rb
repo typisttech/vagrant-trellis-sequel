@@ -2,7 +2,6 @@
 
 require 'erb'
 require 'ostruct'
-require 'optparse'
 require 'vagrant_plugins/trellis_sequel/vault'
 
 module VagrantPlugins
