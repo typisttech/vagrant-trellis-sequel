@@ -48,10 +48,10 @@ module VagrantPlugins
             data = {
               database: vault.database_for(site: options[:site]),
               ssh: {
-                "host": ssh_info[:host],
-                "port": ssh_info[:port],
-                "user": ssh_info[:username],
-                "private_key_path": ssh_info[:private_key_path]
+                host: ssh_info[:host],
+                port: ssh_info[:port],
+                user: ssh_info[:username],
+                private_key_path: ssh_info[:private_key_path]
               }
             }
 

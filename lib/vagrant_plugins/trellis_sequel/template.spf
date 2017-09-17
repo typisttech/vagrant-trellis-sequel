@@ -17,15 +17,15 @@
       <key>password</key>
       <string><%= database[:password] %></string>
       <key>ssh_host</key>
-      <string><%= ssh["host"] %></string>
+      <string><%= ssh[:host] %></string>
       <key>ssh_keyLocation</key>
-      <string><%= ssh["private_key_path"][0] %></string>
+      <string><%= ssh[:private_key_path][0] %></string>
       <key>ssh_keyLocationEnabled</key>
       <integer>1</integer>
       <key>ssh_port</key>
-      <string><%= ssh["port"] %></string>
+      <string><%= ssh[:port] %></string>
       <key>ssh_user</key>
-      <string><%= ssh["user"] %></string>
+      <string><%= ssh[:user] %></string>
       <key>type</key>
       <string>SPSSHTunnelConnection</string>
       <key>user</key>
