@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require 'optparse'
-require 'vagrant'
 
 module VagrantPlugins
   module TrellisSequel
@@ -25,16 +24,23 @@ module VagrantPlugins
         end
 
         def execute
-          return help if (@main_args & %w[-h --help]).any?
-
-          command_class = @subcommands.get(@sub_command&.to_sym)
-          return help unless command_class
+          return help if help? || !sub_command?
 
           # Initialize and execute the command class
-          command_class.new(@sub_args, @env).execute
+          @subcommands.get(@sub_command&.to_sym)
+                      .new(@sub_args, @env)
+                      .execute
         end
 
         private
+
+        def help?
+          (@main_args & %w[-h --help]).any?
+        end
+
+        def sub_command?
+          @subcommands.key?(@sub_command&.to_sym)
+        end
 
         def help
           option_parser = OptionParser.new do |opts|

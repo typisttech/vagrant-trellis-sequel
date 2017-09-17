@@ -2,8 +2,6 @@
 
 require 'erb'
 require 'ostruct'
-require 'optparse'
-require 'vagrant'
 require 'vagrant_plugins/trellis_sequel/vault'
 
 module VagrantPlugins
@@ -50,10 +48,10 @@ module VagrantPlugins
             data = {
               database: vault.database_for(site: options[:site]),
               ssh: {
-                "host": ssh_info[:host],
-                "port": ssh_info[:port],
-                "user": ssh_info[:username],
-                "private_key_path": ssh_info[:private_key_path]
+                host: ssh_info[:host],
+                port: ssh_info[:port],
+                user: ssh_info[:username],
+                private_key_path: ssh_info[:private_key_path]
               }
             }
 
@@ -77,8 +75,11 @@ module VagrantPlugins
 
         private
 
+        # TODO: Do not read password file if vault is not encrypted
         def vault_password_from(path: nil, machine: nil)
           path ||= File.join(machine.env.root_path, '.vault_pass')
+          # TODO: Raise exception
+          return unless File.file?(path)
           File.read(path).chomp
         end
 
