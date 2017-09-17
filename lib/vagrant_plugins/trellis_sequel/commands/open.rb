@@ -36,11 +36,8 @@ module VagrantPlugins
           argv = parse_options(opts)
 
           with_target_vms(argv) do |machine|
-            # Collect SSL data
-            ssh_info = machine.ssh_info
-            raise Vagrant::Errors::SSHNotReady if ssh_info.nil?
+            raise Vagrant::Errors::SSHNotReady unless machine.communicate.ready?
 
-            # Collect database data
             vault_path = File.join(machine.env.root_path, 'group_vars/development/vault.yml')
 
             if ::Ansible::Vault.encrypted?(vault_path)
@@ -54,12 +51,7 @@ module VagrantPlugins
 
             data = {
               database: vault.database_for(site: options[:site]),
-              ssh: {
-                host: ssh_info[:host],
-                port: ssh_info[:port],
-                user: ssh_info[:username],
-                private_key_path: ssh_info[:private_key_path]
-              }
+              ssh: ssh_for(machine: machine)
             }
 
             Spf.create_and_open(data: data, path: @env.tmp_path)
@@ -69,6 +61,14 @@ module VagrantPlugins
           0
         end
         # rubocop:enable Metrics/MethodLength
+
+        private
+
+        def ssh_for(machine:)
+          machine.ssh_info.select do |key, _value|
+            %i[host port username private_key_path].include?(key)
+          end
+        end
       end
     end
   end
