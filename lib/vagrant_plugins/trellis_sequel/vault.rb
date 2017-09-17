@@ -26,9 +26,7 @@ module VagrantPlugins
       def database_for(site: nil, **_)
         site ||= first_wordpress_site
 
-        unless password_exist_for?(site)
-          raise Vagrant::Errors::CLIInvalidOptions.new help: "DB password not found for #{site}"
-        end
+        raise "DB password not found for #{site}" unless password_exist_for?(site)
 
         {
           name: db_name_for(site),
