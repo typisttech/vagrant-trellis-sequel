@@ -5,14 +5,11 @@ Naming/FileName:
   Exclude:
     - 'lib/vagrant-trellis-sequel.rb'
 
-Metrics/AbcSize:
-  Max: 44
-
 Metrics/LineLength:
   Max: 120
 
 Metrics/MethodLength:
-  Max: 11
+  Max: 12
 
 Style/Documentation:
   Enabled: false
