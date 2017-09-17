@@ -1,14 +1,14 @@
 # frozen_string_literal: true
 
-require "optparse"
-require "vagrant"
+require 'optparse'
+require 'vagrant'
 
 module VagrantPlugins
   module TrellisSequel
     module Commands
-      class Root < Vagrant.plugin("2", :command)
+      class Root < Vagrant.plugin('2', :command)
         def self.synopsis
-          "open Trellis databases in Sequel Pro"
+          'open Trellis databases in Sequel Pro'
         end
 
         def initialize(argv, env)
@@ -19,7 +19,7 @@ module VagrantPlugins
           @subcommands = Vagrant::Registry.new
 
           @subcommands.register(:open) do
-            require_relative "open"
+            require_relative 'open'
             Open
           end
         end
@@ -36,22 +36,22 @@ module VagrantPlugins
 
         private
 
-          def help
-            option_parser = OptionParser.new do |opts|
-              opts.banner = "Usage: vagrant trellis-sequel <command> [<args>]"
-              opts.separator ""
-              opts.separator "Available subcommands:"
+        def help
+          option_parser = OptionParser.new do |opts|
+            opts.banner = 'Usage: vagrant trellis-sequel <command> [<args>]'
+            opts.separator ''
+            opts.separator 'Available subcommands:'
 
-              @subcommands.keys.sort.each do |key|
-                opts.separator "     #{key}"
-              end
-
-              opts.separator ""
-              opts.separator "For help on any individual command run 'vagrant trellis-sequel COMMAND -h'"
+            @subcommands.keys.sort.each do |key|
+              opts.separator "     #{key}"
             end
 
-            @env.ui.info(option_parser.help, prefix: false)
+            opts.separator ''
+            opts.separator "For help on any individual command run 'vagrant trellis-sequel COMMAND -h'"
           end
+
+          @env.ui.info(option_parser.help, prefix: false)
+        end
       end
     end
   end
