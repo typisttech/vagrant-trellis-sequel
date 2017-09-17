@@ -7,7 +7,7 @@ module VagrantPlugins
     class Vault
       def initialize(path:, password:)
         @path = path
-        @password = password || 'no-password-given'
+        @password = password
       end
 
       def database_for(site: nil)
@@ -51,7 +51,7 @@ module VagrantPlugins
       end
 
       def content_raw
-        @content_raw ||= ::Ansible::Vault.read(path: @path, password: @password)
+        @content_raw ||= ::Ansible::Vault.read(path: @path, password: @password, allow_blank_password: true)
       end
 
       def underscore(domain)
