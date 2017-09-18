@@ -8,8 +8,8 @@ module VagrantPlugins
       description Identity.description
 
       command 'trellis-sequel' do
-        require_relative 'commands/root'
-        Commands::Root
+        require_relative 'command/root'
+        Command::Root
       end
     end
   end
