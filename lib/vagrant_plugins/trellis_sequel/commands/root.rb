@@ -33,7 +33,7 @@ module VagrantPlugins
         rescue Vagrant::Errors::VagrantError => e
           raise e
         rescue StandardError => e
-          raise Vagrant::Errors::CLIInvalidUsage, help: e.message
+          raise Vagrant::Errors::CLIInvalidUsage, help: "#{e.message}\r\n\r\nBacktrace:\r\n#{e.backtrace&.join("\r\n")}"
         end
 
         private
