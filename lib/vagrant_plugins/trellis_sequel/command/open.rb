@@ -6,7 +6,7 @@ require 'vagrant_plugins/trellis_sequel/vault_pass'
 
 module VagrantPlugins
   module TrellisSequel
-    module Commands
+    module Command
       class Open < Vagrant.plugin('2', :command)
         def execute
           options, argv = parse_options!
