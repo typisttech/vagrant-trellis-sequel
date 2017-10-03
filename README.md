@@ -65,6 +65,7 @@ This works for most of the cases:
   - `vault.yml` is unencrypted
   - `vault.yml` is encrypted and `.vault_pass` contains the vault password
   - running from within the Trellis directory
+  - open the first found database
 
 ### Specify which site's database
 
@@ -73,7 +74,7 @@ $ vagrant trellis-sequel open --site example.com
 ```
 
 Use the `--site` option to specify which site's database to open. By default, the first site's database will be opened.
-Note: This is the site key of `vault_wordpress_sites` in `vault.yml`, usually ends with `.com`.
+Note: This is the **site key** of `vault_wordpress_sites` in `vault.yml`, usually ends with `.com`.
 
 ### Specify vault password file
 
@@ -113,8 +114,9 @@ vault_wordpress_sites:
       db_password: hello
 ```
 
-For the above `vault.yml`, these 2 commands are valid:
+For the above `vault.yml`, these 3 commands are valid:
 ```bash
+$ vagrant trellis-sequel open # Open one of the DB, most likely the first one
 $ vagrant trellis-sequel open --site example.com
 $ vagrant trellis-sequel open --site www.typist.tech
 ```
