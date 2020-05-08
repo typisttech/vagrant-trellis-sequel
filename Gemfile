@@ -13,7 +13,7 @@ unless ENV.key?('VAGRANT_INSTALLER_EMBEDDED_DIR')
   $stderr.puts "Couldn't find a packaged install of vagrant, and we need this"
   $stderr.puts 'in order to make use of the RubyEncoder libraries.'
   $stderr.puts 'I looked in:'
-  embedded_locations.each do |path|
+  embedded_directories.each do |path|
     $stderr.puts "  #{path}"
   end
 end

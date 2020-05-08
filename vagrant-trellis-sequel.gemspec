@@ -9,7 +9,12 @@ Gem::Specification.new do |spec|
   spec.version       = VagrantPlugins::TrellisSequel::Identity.version
   spec.authors       = ['Tang Rufus', 'Typist Tech']
   spec.email         = ['tangrufus@gmail.com', 'vagrant-trellis-sequel@typist.tech']
-
+  spec.metadata      = {
+    'homepage_uri' => 'https://typist.tech/projects/vagrant-trellis-sequel/',
+    'source_code_uri' => 'https://github.com/TypistTech/vagrant-trellis-sequel',
+    'bug_tracker_uri' => 'https://github.com/TypistTech/vagrant-trellis-sequel/issues',
+    'mailing_list_uri' => 'https://typist.tech/go/newsletter/',
+  }
   spec.summary       = VagrantPlugins::TrellisSequel::Identity.summary
   spec.homepage      = 'https://www.typist.tech/projects/vagrant-trellis-sequel'
   spec.license       = 'MIT'
@@ -25,7 +30,6 @@ Gem::Specification.new do |spec|
 
   spec.add_runtime_dependency 'ansible-vault', '~> 0.2.1'
 
-  spec.add_development_dependency 'bundler', '~> 1.15'
-  spec.add_development_dependency 'rake', '~> 12.0'
-  spec.add_development_dependency 'rubocop', '~> 0.50'
+  spec.add_development_dependency 'bundler', '~> 2.1', '>= 2.1.4'
+  spec.add_development_dependency 'rake', '~> 13.0', '>= 13.0.1'
 end
